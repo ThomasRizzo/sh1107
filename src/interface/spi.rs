@@ -1,6 +1,6 @@
 //! sh1107 SPI interface
 
-use hal::{self, digital::v2::OutputPin};
+use hal::{self, digital::OutputPin, spi};
 
 use super::DisplayInterface;
 use crate::Error;
@@ -16,7 +16,7 @@ pub struct SpiInterface<SPI, DC, CS> {
 
 impl<SPI, DC, CS, CommE, PinE> SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::blocking::spi::Write<u8, Error = CommE>,
+    SPI: spi::SpiBus<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
     CS: OutputPin<Error = PinE>,
 {
@@ -28,7 +28,7 @@ where
 
 impl<SPI, DC, CS, CommE, PinE> DisplayInterface for SpiInterface<SPI, DC, CS>
 where
-    SPI: hal::blocking::spi::Write<u8, Error = CommE>,
+    SPI: spi::SpiBus<u8, Error = CommE>,
     DC: OutputPin<Error = PinE>,
     CS: OutputPin<Error = PinE>,
 {

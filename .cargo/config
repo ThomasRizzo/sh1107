@@ -23,4 +23,5 @@ rustflags = [
 ]
 
 [build]
-target = "thumbv7m-none-eabi"
+#target = "thumbv7m-none-eabi"
+target = "thumbv8m.main-none-eabihf"
