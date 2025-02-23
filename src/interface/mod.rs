@@ -50,8 +50,18 @@
 
 pub mod i2c;
 pub mod spi;
+//use core::future::Future;
+
+//TODO: proper way to implement async trait?
+/*
+use of `async fn` in public traits is discouraged as auto trait bounds cannot be specified
+you can suppress this lint if you plan to use the trait only in your own code, or do not care about auto traits like `Send` on the `Future`
+`#[warn(async_fn_in_trait)]` on by defaultrustcClick for full compiler diagnostic
+mod.rs(65, 54): you can alternatively desugar to a normal `fn` that returns `impl Future` and add any desired bounds such as `Send`, but these cannot be relaxed without a breaking API change: `impl std::future::Future<Output = `, `> + Send`
+*/
 
 /// A method of communicating with sh1107
+#[allow(async_fn_in_trait)]
 pub trait DisplayInterface {
     /// Interface error type
     type Error;
@@ -59,9 +69,12 @@ pub trait DisplayInterface {
     /// Initialize device.
     fn init(&mut self) -> Result<(), Self::Error>;
     /// Send a batch of up to 8 commands to display.
-    fn send_commands(&mut self, cmd: &[u8]) -> Result<(), Self::Error>;
+    async fn send_commands(&mut self, cmd: &[u8]) -> Result<(), Self::Error>;
+    //fn send_commands(&mut self, cmd: &[u8]) -> impl Future<Output = Result<(), Self::Error>> + Send;
     /// Send data to display.
-    fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error>;
+    async fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error>;
+    //fn send_data(&mut self, buf: &[u8]) -> impl Future<Output = Result<(), Self::Error>> + Send;
 }
+
 
 pub use self::{i2c::I2cInterface, spi::SpiInterface};

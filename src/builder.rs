@@ -41,7 +41,8 @@
 //! ```
 
 use core::marker::PhantomData;
-use hal::{self, digital::OutputPin, i2c::I2c, spi::SpiBus};
+use hal::{self, digital::OutputPin, spi::SpiBus};
+use embedded_hal_async::{self, i2c::I2c};
 
 use crate::{
     displayrotation::DisplayRotation,
@@ -166,7 +167,6 @@ impl<PinE> NoOutputPin<PinE> {
 
 #[cfg(test)]
 mod tests {
-    use super::NoOutputPin;
     use embedded_hal::digital::OutputPin;
 
     enum SomeError {}

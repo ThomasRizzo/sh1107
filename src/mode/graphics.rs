@@ -78,7 +78,7 @@ where
     }
 
     /// Write out data to display
-    pub fn flush(&mut self) -> Result<(), DI::Error> {
+    pub async fn flush(&mut self) -> Result<(), DI::Error> {
         let display_size = self.properties.get_size();
 
         // Ensure the display buffer is at the origin of the display before we send the full frame
@@ -88,11 +88,11 @@ where
         self.properties.set_draw_area(
             (column_offset, 0),
             (display_width + column_offset, display_height),
-        )?;
+        ).await?;
 
         let length = (display_width as usize) * (display_height as usize) / 8;
 
-        self.properties.draw(&self.buffer[..length])
+        self.properties.draw(&self.buffer[..length]).await
     }
 
     /// Turn a pixel on or off. A non-zero `value` is treated as on, `0` as off. If the X and Y
@@ -147,8 +147,8 @@ where
 
     /// Display is set up in column mode, i.e. a byte walks down a column of 8 pixels from
     /// column 0 on the left, to column _n_ on the right
-    pub fn init(&mut self) -> Result<(), DI::Error> {
-        self.properties.init_column_mode()
+    pub async fn init(&mut self) -> Result<(), DI::Error> {
+        self.properties.init_column_mode().await
     }
 
     /// Get display dimensions, taking into account the current rotation of the display
@@ -157,13 +157,13 @@ where
     }
 
     /// Set the display rotation
-    pub fn set_rotation(&mut self, rot: DisplayRotation) -> Result<(), DI::Error> {
-        self.properties.set_rotation(rot)
+    pub async fn set_rotation(&mut self, rot: DisplayRotation) -> Result<(), DI::Error> {
+        self.properties.set_rotation(rot).await
     }
 
     /// Set the display contrast
-    pub fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
-        self.properties.set_contrast(contrast)
+    pub async fn set_contrast(&mut self, contrast: u8) -> Result<(), DI::Error> {
+        self.properties.set_contrast(contrast).await
     }
 }
 

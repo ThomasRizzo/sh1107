@@ -1,7 +1,7 @@
 //! SH1107 I2C Interface
 
-use hal::{self, i2c::I2c};
-
+//use hal::{self, i2c::I2c};
+use embedded_hal_async::{self, i2c::I2c};
 use super::DisplayInterface;
 use crate::{command::Page, Error};
 
@@ -31,17 +31,17 @@ where
         Ok(())
     }
 
-    fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
+    async fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         // Copy over given commands to new aray to prefix with command identifier
         let mut writebuf: [u8; 8] = [0; 8];
         writebuf[1..=cmds.len()].copy_from_slice(&cmds);
 
         self.i2c
-            .write(self.addr, &writebuf[..=cmds.len()])
+            .write(self.addr, &writebuf[..=cmds.len()]).await
             .map_err(Error::Comm)
     }
 
-    fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
+    async fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         // TODO: figure out a way to pass chunklen in, should likely always be 64 for sh1107, but the sh1106 was doing 128
         const CHUNKLEN: usize = 64;
 
@@ -72,10 +72,10 @@ where
                         0x02, // Lower column address
                         0x10, // Upper column address (always zero, base is 10h)
                     ],
-                )
+                ).await
                 .map_err(Error::Comm)?;
 
-            self.i2c.write(self.addr, &writebuf).map_err(Error::Comm)?;
+            self.i2c.write(self.addr, &writebuf).await.map_err(Error::Comm)?;
 
             page += 1;
         }

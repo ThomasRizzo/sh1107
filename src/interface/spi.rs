@@ -38,7 +38,7 @@ where
         self.cs.set_high().map_err(Error::Pin)
     }
 
-    fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
+    async fn send_commands(&mut self, cmds: &[u8]) -> Result<(), Self::Error> {
         self.cs.set_low().map_err(Error::Pin)?;
         self.dc.set_low().map_err(Error::Pin)?;
 
@@ -48,7 +48,7 @@ where
         self.cs.set_high().map_err(Error::Pin)
     }
 
-    fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
+    async fn send_data(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         self.cs.set_low().map_err(Error::Pin)?;
 
         // 1 = data, 0 = command
